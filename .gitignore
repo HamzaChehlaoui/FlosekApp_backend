@@ -1,0 +1,130 @@
+### Maven ###
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+### Spring Boot ###
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+*.code-workspace
+
+### Eclipse ###
+.metadata
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+
+### Environment Variables ###
+.env
+.env.local
+.env.*.local
+*.env
+
+### Database ###
+*.db
+*.sqlite
+*.sqlite3
+*.h2.db
+*.trace.db
+*.lock.db
+
+### Logs ###
+logs/
+*.log
+log/
+*.log.*
+spring.log
+
+### OS Files ###
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+### Docker ###
+docker-compose.override.yml
+*.dockerignore.bak
+
+### Application Specific ###
+uploads/
+temp/
+tmp/
+reports/
+*.pdf
+*.xlsx
+
+### Security & Secrets ###
+application-local.properties
+application-dev.properties
+application-prod.properties
+*.key
+*.pem
+*.p12
+*.jks
+*.keystore
+*.truststore
+
+### Node (if using frontend tools) ###
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+### Backup Files ###
+*.bak
+*.backup
+*~
