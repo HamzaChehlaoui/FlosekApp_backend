@@ -2,6 +2,7 @@ package com.flosek.flosek.controller;
 
 import com.flosek.flosek.dto.request.ContributionRequestDTO;
 import com.flosek.flosek.dto.request.SavingsGoalRequestDTO;
+import com.flosek.flosek.dto.response.ContributionResponseDTO;
 import com.flosek.flosek.dto.response.SavingsGoalResponseDTO;
 import com.flosek.flosek.entity.User;
 import com.flosek.flosek.service.SavingsGoalService;
@@ -63,6 +64,13 @@ public class SavingsGoalController {
             @Valid @RequestBody ContributionRequestDTO request,
             @AuthenticationPrincipal User user) {
         return ResponseEntity.ok(savingsGoalService.addContribution(id, request, user.getId()));
+    }
+
+    @GetMapping("/contributions/recent")
+    public ResponseEntity<List<ContributionResponseDTO>> getRecentContributions(
+            @RequestParam(defaultValue = "5") int limit,
+            @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(savingsGoalService.getRecentContributions(user.getId(), limit));
     }
 
     @DeleteMapping("/{id}")
