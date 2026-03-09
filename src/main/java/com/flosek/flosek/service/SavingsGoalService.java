@@ -2,6 +2,7 @@ package com.flosek.flosek.service;
 
 import com.flosek.flosek.dto.request.ContributionRequestDTO;
 import com.flosek.flosek.dto.request.SavingsGoalRequestDTO;
+import com.flosek.flosek.dto.response.ContributionResponseDTO;
 import com.flosek.flosek.dto.response.SavingsGoalResponseDTO;
 
 import java.util.List;
@@ -20,6 +21,8 @@ public interface SavingsGoalService {
     SavingsGoalResponseDTO updateSavingsGoal(UUID id, SavingsGoalRequestDTO request, UUID userId);
 
     SavingsGoalResponseDTO addContribution(UUID id, ContributionRequestDTO request, UUID userId);
+
+    List<ContributionResponseDTO> getRecentContributions(UUID userId, int limit);
 
     void deleteSavingsGoal(UUID id, UUID userId);
 }
