@@ -11,14 +11,12 @@ import com.flosek.flosek.repository.ExpenseRepository;
 import com.flosek.flosek.repository.SalaryRepository;
 import com.flosek.flosek.service.ReportService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
