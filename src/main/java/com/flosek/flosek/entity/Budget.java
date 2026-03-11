@@ -41,6 +41,10 @@ public class Budget extends BaseEntity {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "is_recurring", nullable = false)
+    @Builder.Default
+    private Boolean isRecurring = false;
+
     /**
      * Calculate remaining budget
      */
