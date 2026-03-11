@@ -28,4 +28,5 @@ public class BudgetResponseDTO {
     private CategoryResponseDTO category;
     private Boolean isExceeded;
     private Double spentPercentage;
+    private Boolean isRecurring;
 }

@@ -34,4 +34,6 @@ public class BudgetRequestDTO {
     private UUID categoryId;
 
     private String name;
+
+    private Boolean isRecurring;
 }
