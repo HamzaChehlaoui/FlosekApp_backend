@@ -51,4 +51,40 @@ public interface BudgetRepository extends JpaRepository<Budget, UUID> {
     BigDecimal sumActiveSpentAmount(
             @Param("userId") UUID userId,
             @Param("currentDate") LocalDate currentDate);
+
+    /**
+     * Find recurring budgets that have expired (endDate before given date)
+     */
+    @Query("SELECT b FROM Budget b WHERE b.isRecurring = true " +
+           "AND b.endDate < :currentDate " +
+           "AND b.deletedAt IS NULL")
+    List<Budget> findExpiredRecurringBudgets(@Param("currentDate") LocalDate currentDate);
+
+    /**
+     * Check if an active budget already exists for a category and user in an overlapping period
+     */
+    @Query("SELECT COUNT(b) > 0 FROM Budget b WHERE b.user.id = :userId " +
+           "AND b.category.id = :categoryId " +
+           "AND b.startDate <= :endDate AND b.endDate >= :startDate " +
+           "AND b.deletedAt IS NULL")
+    boolean existsOverlappingBudget(
+            @Param("userId") UUID userId,
+            @Param("categoryId") UUID categoryId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
+
+    /**
+     * Check overlapping budget excluding a specific budget (for updates)
+     */
+    @Query("SELECT COUNT(b) > 0 FROM Budget b WHERE b.user.id = :userId " +
+           "AND b.category.id = :categoryId " +
+           "AND b.id <> :excludeId " +
+           "AND b.startDate <= :endDate AND b.endDate >= :startDate " +
+           "AND b.deletedAt IS NULL")
+    boolean existsOverlappingBudgetExcluding(
+            @Param("userId") UUID userId,
+            @Param("categoryId") UUID categoryId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("excludeId") UUID excludeId);
 }
