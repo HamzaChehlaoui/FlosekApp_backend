@@ -59,25 +59,44 @@ public class BudgetServiceImpl implements BudgetService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
-        Category category = categoryRepository.findById(request.getCategoryId())
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", request.getCategoryId()));
+        Category category = categoryRepository.findByIdAndUserIdOrDefault(request.getCategoryId(), userId)
+            .orElseThrow(() -> new ResourceNotFoundException("Category", "id", request.getCategoryId()));
 
-        if (request.getEndDate().isBefore(request.getStartDate())) {
-            throw new IllegalArgumentException("End date must be after start date");
+        boolean isRecurring = Boolean.TRUE.equals(request.getIsRecurring());
+        LocalDate startDate;
+        LocalDate endDate;
+
+        if (isRecurring) {
+            // Recurring budgets always span the current month
+            LocalDate today = LocalDate.now();
+            startDate = today.withDayOfMonth(1);
+            endDate = today.withDayOfMonth(today.lengthOfMonth());
+        } else {
+            startDate = request.getStartDate();
+            endDate = request.getEndDate();
+            if (endDate.isBefore(startDate)) {
+                throw new IllegalArgumentException("End date must be after start date");
+            }
         }
 
-        // Calculate already spent amount for this category in the budget period
-        BigDecimal alreadySpent = expenseRepository.sumByUserIdAndDateRange(
-                userId, request.getStartDate(), request.getEndDate());
+        // Check for duplicate category in overlapping period
+        if (budgetRepository.existsOverlappingBudget(userId, request.getCategoryId(), startDate, endDate)) {
+            throw new IllegalArgumentException("A budget for this category already exists in the selected period");
+        }
+
+        // Calculate already spent amount for this CATEGORY in the budget period
+        BigDecimal alreadySpent = expenseRepository.sumByUserIdAndCategoryIdAndDateRange(
+                userId, request.getCategoryId(), startDate, endDate);
 
         Budget budget = Budget.builder()
                 .amount(request.getAmount())
                 .spentAmount(alreadySpent != null ? alreadySpent : BigDecimal.ZERO)
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
+                .startDate(startDate)
+                .endDate(endDate)
                 .category(category)
                 .user(user)
                 .name(request.getName())
+                .isRecurring(isRecurring)
                 .build();
 
         Budget saved = budgetRepository.save(budget);
@@ -89,18 +108,41 @@ public class BudgetServiceImpl implements BudgetService {
     public BudgetResponseDTO updateBudget(UUID id, BudgetRequestDTO request, UUID userId) {
         Budget budget = findBudgetAndValidateOwner(id, userId);
 
-        Category category = categoryRepository.findById(request.getCategoryId())
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", request.getCategoryId()));
+        Category category = categoryRepository.findByIdAndUserIdOrDefault(request.getCategoryId(), userId)
+            .orElseThrow(() -> new ResourceNotFoundException("Category", "id", request.getCategoryId()));
 
-        if (request.getEndDate().isBefore(request.getStartDate())) {
-            throw new IllegalArgumentException("End date must be after start date");
+        boolean isRecurring = Boolean.TRUE.equals(request.getIsRecurring());
+        LocalDate startDate;
+        LocalDate endDate;
+
+        if (isRecurring) {
+            LocalDate today = LocalDate.now();
+            startDate = today.withDayOfMonth(1);
+            endDate = today.withDayOfMonth(today.lengthOfMonth());
+        } else {
+            startDate = request.getStartDate();
+            endDate = request.getEndDate();
+            if (endDate.isBefore(startDate)) {
+                throw new IllegalArgumentException("End date must be after start date");
+            }
         }
 
+        // Check for duplicate category in overlapping period (excluding this budget)
+        if (budgetRepository.existsOverlappingBudgetExcluding(userId, request.getCategoryId(), startDate, endDate, id)) {
+            throw new IllegalArgumentException("A budget for this category already exists in the selected period");
+        }
+
+        // Recalculate spent amount for the category
+        BigDecimal alreadySpent = expenseRepository.sumByUserIdAndCategoryIdAndDateRange(
+                userId, request.getCategoryId(), startDate, endDate);
+
         budget.setAmount(request.getAmount());
-        budget.setStartDate(request.getStartDate());
-        budget.setEndDate(request.getEndDate());
+        budget.setStartDate(startDate);
+        budget.setEndDate(endDate);
         budget.setCategory(category);
         budget.setName(request.getName());
+        budget.setIsRecurring(isRecurring);
+        budget.setSpentAmount(alreadySpent != null ? alreadySpent : BigDecimal.ZERO);
 
         Budget saved = budgetRepository.save(budget);
         return budgetMapper.toResponseDTO(saved);
