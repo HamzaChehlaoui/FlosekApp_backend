@@ -39,4 +39,14 @@ public class AuthController {
         AuthResponseDTO response = authService.login(request);
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * Authenticate user with Google and get JWT token
+     * POST /api/auth/google
+     */
+    @PostMapping("/google")
+    public ResponseEntity<AuthResponseDTO> googleLogin(@Valid @RequestBody com.flosek.flosek.dto.request.GoogleLoginRequestDTO request) {
+        AuthResponseDTO response = authService.googleLogin(request);
+        return ResponseEntity.ok(response);
+    }
 }

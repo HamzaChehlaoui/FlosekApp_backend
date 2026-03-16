@@ -18,4 +18,9 @@ public interface AuthService {
      * Authenticate user and return JWT token
      */
     AuthResponseDTO login(LoginRequestDTO request);
+
+    /**
+     * Authenticate with Google and return JWT token
+     */
+    AuthResponseDTO googleLogin(com.flosek.flosek.dto.request.GoogleLoginRequestDTO request);
 }

@@ -1,5 +1,6 @@
 package com.flosek.flosek.entity;
 
+import com.flosek.flosek.enums.AuthProvider;
 import com.flosek.flosek.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
@@ -31,12 +32,17 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", nullable = true)
     private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Role role;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "auth_provider", nullable = false)
+    @Builder.Default
+    private AuthProvider authProvider = AuthProvider.LOCAL;
 
     // ===== UserDetails Implementation =====
 
