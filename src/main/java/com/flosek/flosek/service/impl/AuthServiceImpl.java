@@ -82,10 +82,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public AuthResponseDTO googleLogin(GoogleLoginRequestDTO request) {
         try {
-            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
-                    new NetHttpTransport(), new GsonFactory())
-                    .setAudience(Collections.singletonList(googleClientId))
-                    .build();
+            GoogleIdTokenVerifier verifier = createGoogleVerifier();
 
             GoogleIdToken idToken = verifier.verify(request.getIdToken());
             if (idToken == null) {
@@ -137,4 +134,11 @@ public class AuthServiceImpl implements AuthService {
         response.setExpiresIn(jwtProvider.getExpirationTime());
         return response;
     }
+    
+    protected GoogleIdTokenVerifier createGoogleVerifier() {
+    return new GoogleIdTokenVerifier.Builder(
+            new NetHttpTransport(), new GsonFactory())
+            .setAudience(Collections.singletonList(googleClientId))
+            .build();
+}
 }

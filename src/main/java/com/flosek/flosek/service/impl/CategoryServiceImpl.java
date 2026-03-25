@@ -10,7 +10,8 @@ import com.flosek.flosek.mapper.CategoryMapper;
 import com.flosek.flosek.repository.CategoryRepository;
 import com.flosek.flosek.repository.UserRepository;
 import com.flosek.flosek.service.CategoryService;
-import jakarta.annotation.PostConstruct;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -103,7 +104,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @PostConstruct
+    @EventListener(ApplicationReadyEvent.class)
     @Transactional
     public void initializeDefaultCategories() {
         List<Category> existingDefaults = categoryRepository.findByIsDefaultTrueAndDeletedAtIsNull();
