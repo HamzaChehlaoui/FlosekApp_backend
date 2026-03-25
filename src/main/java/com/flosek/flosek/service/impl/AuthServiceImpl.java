@@ -18,7 +18,6 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -112,11 +111,15 @@ public class AuthServiceImpl implements AuthService {
                 // Register new user via Google
                 user = new User();
                 user.setEmail(email);
-                user.setFirstName(firstName);
-                user.setLastName(lastName);
+
+                user.setFirstName(firstName != null && !firstName.isBlank() ? firstName : "GoogleUser");
+                user.setLastName(lastName != null && !lastName.isBlank() ? lastName : "User");
+
+                user.setPassword(passwordEncoder.encode("GOOGLE_USER"));
+
                 user.setRole(Role.USER);
                 user.setAuthProvider(AuthProvider.GOOGLE);
-                // No password needed for OAuth
+
                 user = userRepository.save(user);
             }
 
