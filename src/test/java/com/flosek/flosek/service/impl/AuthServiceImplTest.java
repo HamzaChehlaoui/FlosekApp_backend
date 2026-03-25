@@ -434,7 +434,7 @@ class AuthServiceImplTest {
             ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
             verify(userRepository).save(captor.capture());
             assertThat(captor.getValue().getFirstName()).isEqualTo("User");
-            assertThat(captor.getValue().getLastName()).isEqualTo("");
+            assertThat(captor.getValue().getLastName()).isEqualTo("User");
         }
     }
 }
