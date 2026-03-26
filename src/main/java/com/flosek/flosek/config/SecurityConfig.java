@@ -76,7 +76,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        configuration.setAllowedOrigins(Arrays.asList("https://flosek-app.vercel.app"));
+        configuration.setAllowedOriginPatterns(Arrays.asList( "https://*.vercel.app",
+        "http://localhost:4200"));
         
         configuration.setAllowedMethods(Arrays.asList(
             "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
