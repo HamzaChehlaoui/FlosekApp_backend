@@ -16,23 +16,23 @@ import java.util.UUID;
 @Repository
 public interface SavingsGoalRepository extends JpaRepository<SavingsGoal, UUID> {
 
-    /**
-     * Find all savings goals for a user that are not soft deleted
-     */
-    List<SavingsGoal> findByUserIdAndDeletedAtIsNullOrderByCreatedAtDesc(UUID userId);
+       /**
+        * Find all savings goals for a user that are not soft deleted
+        */
+       List<SavingsGoal> findByUserIdAndDeletedAtIsNullOrderByCreatedAtDesc(UUID userId);
 
-    /**
-     * Find active (not completed) savings goals for a user
-     */
-    @Query("SELECT sg FROM SavingsGoal sg WHERE sg.user.id = :userId " +
-           "AND sg.currentAmount < sg.targetAmount " +
-           "AND sg.deletedAt IS NULL ORDER BY sg.createdAt DESC")
-    List<SavingsGoal> findActiveByUserId(@Param("userId") UUID userId);
+       /**
+        * Find active (not completed) savings goals for a user
+        */
+       @Query("SELECT sg FROM SavingsGoal sg WHERE sg.user.id = :userId " +
+              "AND sg.currentAmount < sg.targetAmount " +
+              "AND sg.deletedAt IS NULL ORDER BY sg.createdAt DESC")
+       List<SavingsGoal> findActiveByUserId(@Param("userId") UUID userId);
 
-    /**
-     * Find top savings goals with limit
-     */
-    @Query("SELECT sg FROM SavingsGoal sg WHERE sg.user.id = :userId " +
-           "AND sg.deletedAt IS NULL ORDER BY sg.createdAt DESC")
-    List<SavingsGoal> findTopByUserId(@Param("userId") UUID userId, Pageable pageable);
+       /**
+        * Find top savings goals with limit
+        */
+       @Query("SELECT sg FROM SavingsGoal sg WHERE sg.user.id = :userId " +
+              "AND sg.deletedAt IS NULL ORDER BY sg.createdAt DESC")
+       List<SavingsGoal> findTopByUserId(@Param("userId") UUID userId, Pageable pageable);
 }

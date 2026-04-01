@@ -32,8 +32,8 @@ public interface ReportRepository extends JpaRepository<Report, UUID> {
      * Find reports within a date range
      */
     @Query("SELECT r FROM Report r WHERE r.user.id = :userId " +
-           "AND r.startDate >= :startDate AND r.endDate <= :endDate " +
-           "AND r.deletedAt IS NULL ORDER BY r.createdAt DESC")
+            "AND r.startDate >= :startDate AND r.endDate <= :endDate " +
+            "AND r.deletedAt IS NULL ORDER BY r.createdAt DESC")
     List<Report> findByUserIdAndDateRange(
             @Param("userId") UUID userId,
             @Param("startDate") LocalDate startDate,

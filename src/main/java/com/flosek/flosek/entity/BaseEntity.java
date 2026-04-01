@@ -19,7 +19,7 @@ import java.util.UUID;
  * - deletedAt timestamp (for soft delete)
  */
 @Getter
-@Setter
+@Setter 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @lombok.experimental.SuperBuilder(toBuilder = true)

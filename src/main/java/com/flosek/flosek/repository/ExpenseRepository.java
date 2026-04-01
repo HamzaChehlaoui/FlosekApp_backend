@@ -18,76 +18,76 @@ import java.util.UUID;
 @Repository
 public interface ExpenseRepository extends JpaRepository<Expense, UUID> {
 
-    /**
-     * Find all expenses for a user that are not soft deleted
-     */
-    List<Expense> findByUserIdAndDeletedAtIsNullOrderByExpenseDateDesc(UUID userId);
+       /**
+        * Find all expenses for a user that are not soft deleted
+        */
+       List<Expense> findByUserIdAndDeletedAtIsNullOrderByExpenseDateDesc(UUID userId);
 
-    /**
-     * Find expenses by user within a date range
-     */
-    @Query("SELECT e FROM Expense e WHERE e.user.id = :userId " +
-           "AND e.expenseDate BETWEEN :startDate AND :endDate " +
-           "AND e.deletedAt IS NULL ORDER BY e.expenseDate DESC")
-    List<Expense> findByUserIdAndDateRange(
-            @Param("userId") UUID userId,
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate);
+       /**
+        * Find expenses by user within a date range
+        */
+       @Query("SELECT e FROM Expense e WHERE e.user.id = :userId " +
+              "AND e.expenseDate BETWEEN :startDate AND :endDate " +
+              "AND e.deletedAt IS NULL ORDER BY e.expenseDate DESC")
+       List<Expense> findByUserIdAndDateRange(
+              @Param("userId") UUID userId,
+              @Param("startDate") LocalDate startDate,
+              @Param("endDate") LocalDate endDate);
 
-    /**
-     * Find recent expenses for a user with limit
-     */
-    @Query("SELECT e FROM Expense e WHERE e.user.id = :userId " +
-           "AND e.deletedAt IS NULL ORDER BY e.expenseDate DESC, e.createdAt DESC")
-    List<Expense> findRecentByUserId(@Param("userId") UUID userId, Pageable pageable);
+       /**
+        * Find recent expenses for a user with limit
+        */
+       @Query("SELECT e FROM Expense e WHERE e.user.id = :userId " +
+              "AND e.deletedAt IS NULL ORDER BY e.expenseDate DESC, e.createdAt DESC")
+       List<Expense> findRecentByUserId(@Param("userId") UUID userId, Pageable pageable);
 
-    /**
-     * Calculate total expenses for a user in a date range
-     */
-    @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e WHERE e.user.id = :userId " +
-           "AND e.expenseDate BETWEEN :startDate AND :endDate " +
-           "AND e.deletedAt IS NULL")
-    BigDecimal sumByUserIdAndDateRange(
-            @Param("userId") UUID userId,
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate);
+       /**
+        * Calculate total expenses for a user in a date range
+        */
+       @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e WHERE e.user.id = :userId " +
+              "AND e.expenseDate BETWEEN :startDate AND :endDate " +
+              "AND e.deletedAt IS NULL")
+       BigDecimal sumByUserIdAndDateRange(
+              @Param("userId") UUID userId,
+              @Param("startDate") LocalDate startDate,
+              @Param("endDate") LocalDate endDate);
 
-    /**
-     * Calculate total expenses for a user by category in a date range
-     */
-    @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e WHERE e.user.id = :userId " +
-           "AND e.category.id = :categoryId " +
-           "AND e.expenseDate BETWEEN :startDate AND :endDate " +
-           "AND e.deletedAt IS NULL")
-    BigDecimal sumByUserIdAndCategoryIdAndDateRange(
-            @Param("userId") UUID userId,
-            @Param("categoryId") UUID categoryId,
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate);
+       /**
+        * Calculate total expenses for a user by category in a date range
+        */
+       @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e WHERE e.user.id = :userId " +
+              "AND e.category.id = :categoryId " +
+              "AND e.expenseDate BETWEEN :startDate AND :endDate " +
+              "AND e.deletedAt IS NULL")
+       BigDecimal sumByUserIdAndCategoryIdAndDateRange(
+              @Param("userId") UUID userId,
+              @Param("categoryId") UUID categoryId,
+              @Param("startDate") LocalDate startDate,
+              @Param("endDate") LocalDate endDate);
 
-    /**
-     * Calculate total expenses by category for a user in a date range
-     */
-    @Query("SELECT e.category.id, e.category.name, e.category.icon, e.category.color, " +
-           "COALESCE(SUM(e.amount), 0) " +
-           "FROM Expense e WHERE e.user.id = :userId " +
-           "AND e.expenseDate BETWEEN :startDate AND :endDate " +
-           "AND e.deletedAt IS NULL " +
-           "GROUP BY e.category.id, e.category.name, e.category.icon, e.category.color " +
-           "ORDER BY SUM(e.amount) DESC")
-    List<Object[]> sumByUserIdAndCategoryInDateRange(
-            @Param("userId") UUID userId,
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate);
+       /**
+        * Calculate total expenses by category for a user in a date range
+        */
+       @Query("SELECT e.category.id, e.category.name, e.category.icon, e.category.color, " +
+              "COALESCE(SUM(e.amount), 0) " +
+              "FROM Expense e WHERE e.user.id = :userId " +
+              "AND e.expenseDate BETWEEN :startDate AND :endDate " +
+              "AND e.deletedAt IS NULL " +
+              "GROUP BY e.category.id, e.category.name, e.category.icon, e.category.color " +
+              "ORDER BY SUM(e.amount) DESC")
+       List<Object[]> sumByUserIdAndCategoryInDateRange(
+              @Param("userId") UUID userId,
+              @Param("startDate") LocalDate startDate,
+              @Param("endDate") LocalDate endDate);
 
-    /**
-     * Count distinct categories used by user in a date range
-     */
-    @Query("SELECT COUNT(DISTINCT e.category.id) FROM Expense e WHERE e.user.id = :userId " +
-           "AND e.expenseDate BETWEEN :startDate AND :endDate " +
-           "AND e.deletedAt IS NULL")
-    Integer countDistinctCategoriesByUserIdAndDateRange(
-            @Param("userId") UUID userId,
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate);
+       /**
+        * Count distinct categories used by user in a date range
+        */
+       @Query("SELECT COUNT(DISTINCT e.category.id) FROM Expense e WHERE e.user.id = :userId " +
+              "AND e.expenseDate BETWEEN :startDate AND :endDate " +
+              "AND e.deletedAt IS NULL")
+       Integer countDistinctCategoriesByUserIdAndDateRange(
+              @Param("userId") UUID userId,
+              @Param("startDate") LocalDate startDate,
+              @Param("endDate") LocalDate endDate);
 }
