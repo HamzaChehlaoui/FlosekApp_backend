@@ -56,7 +56,7 @@ public class ReportServiceImpl implements ReportService {
                 endDate = LocalDate.of(reportYear, 12, 31);
                 break;
 
-            case QUARTERLY:
+            case QUARTERLY: // 3 mois
                 int qYear = request.getYear() != null ? request.getYear() : LocalDate.now().getYear();
                 int quarter = request.getQuarter() != null ? request.getQuarter() : ((LocalDate.now().getMonthValue() - 1) / 3) + 1;
                 int startMonth = (quarter - 1) * 3 + 1;
@@ -64,7 +64,7 @@ public class ReportServiceImpl implements ReportService {
                 endDate = startDate.plusMonths(2).withDayOfMonth(startDate.plusMonths(2).lengthOfMonth());
                 break;
 
-            case CUSTOM:
+            case CUSTOM: // start to end
                 startDate = request.getStartDate() != null ? request.getStartDate() : LocalDate.now().minusMonths(1);
                 endDate = request.getEndDate() != null ? request.getEndDate() : LocalDate.now();
                 break;
@@ -139,16 +139,12 @@ public class ReportServiceImpl implements ReportService {
         BigDecimal prevSavings = prevIncome.subtract(prevExpenses);
         BigDecimal savingsChange = calculatePercentageChange(prevSavings, netSavings);
 
-        // Get monthly data
         List<MonthlyReportData> monthlyData = getMonthlyData(userId, startDate, endDate);
 
-        // Get category breakdown
         List<CategoryReportData> categoryBreakdown = getCategoryBreakdown(userId, startDate, endDate, totalExpenses, prevStartDate, prevEndDate);
 
-        // Get top expenses
         List<TopExpenseData> topExpenses = getTopExpenses(userId, startDate, endDate);
 
-        // Build period label
         String periodLabel = buildPeriodLabel(reportType, startDate, endDate);
 
         return ReportResponseDTO.builder()
@@ -169,9 +165,7 @@ public class ReportServiceImpl implements ReportService {
                 .build();
     }
 
-    /**
-     * Calculate percentage change between two values
-     */
+    
     private BigDecimal calculatePercentageChange(BigDecimal previous, BigDecimal current) {
         if (previous == null || previous.compareTo(BigDecimal.ZERO) == 0) {
             return current != null && current.compareTo(BigDecimal.ZERO) != 0 ? BigDecimal.valueOf(100) : BigDecimal.ZERO;
@@ -181,9 +175,7 @@ public class ReportServiceImpl implements ReportService {
                 .multiply(BigDecimal.valueOf(100));
     }
 
-    /**
-     * Get monthly breakdown data
-     */
+    
     private List<MonthlyReportData> getMonthlyData(UUID userId, LocalDate startDate, LocalDate endDate) {
         List<MonthlyReportData> monthlyData = new ArrayList<>();
 
@@ -217,9 +209,7 @@ public class ReportServiceImpl implements ReportService {
         return monthlyData;
     }
 
-    /**
-     * Get category breakdown with trends
-     */
+   
     private List<CategoryReportData> getCategoryBreakdown(UUID userId, LocalDate startDate, LocalDate endDate,
                                                            BigDecimal totalExpenses, LocalDate prevStartDate, LocalDate prevEndDate) {
         List<Object[]> categoryData = expenseRepository.sumByUserIdAndCategoryInDateRange(userId, startDate, endDate);

@@ -67,7 +67,6 @@ public class BudgetServiceImpl implements BudgetService {
         LocalDate endDate;
 
         if (isRecurring) {
-            // Recurring budgets always span the current month
             LocalDate today = LocalDate.now();
             startDate = today.withDayOfMonth(1);
             endDate = today.withDayOfMonth(today.lengthOfMonth());
@@ -79,7 +78,6 @@ public class BudgetServiceImpl implements BudgetService {
             }
         }
 
-        // Check for duplicate category in overlapping period
         if (budgetRepository.existsOverlappingBudget(userId, request.getCategoryId(), startDate, endDate)) {
             throw new IllegalArgumentException("A budget for this category already exists in the selected period");
         }
@@ -127,12 +125,10 @@ public class BudgetServiceImpl implements BudgetService {
             }
         }
 
-        // Check for duplicate category in overlapping period (excluding this budget)
         if (budgetRepository.existsOverlappingBudgetExcluding(userId, request.getCategoryId(), startDate, endDate, id)) {
             throw new IllegalArgumentException("A budget for this category already exists in the selected period");
         }
 
-        // Recalculate spent amount for the category
         BigDecimal alreadySpent = expenseRepository.sumByUserIdAndCategoryIdAndDateRange(
                 userId, request.getCategoryId(), startDate, endDate);
 

@@ -89,7 +89,6 @@ public class ExpenseServiceImpl implements ExpenseService {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", request.getCategoryId()));
 
-        // Reverse old budget impact
         updateBudgetSpentAmount(userId, expense.getCategory().getId(),
                 expense.getAmount().negate(), expense.getExpenseDate());
 
@@ -102,7 +101,6 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         Expense saved = expenseRepository.save(expense);
 
-        // Apply new budget impact
         updateBudgetSpentAmount(userId, category.getId(), request.getAmount(), request.getExpenseDate());
 
         return expenseMapper.toResponseDTO(saved);
@@ -113,7 +111,6 @@ public class ExpenseServiceImpl implements ExpenseService {
     public void deleteExpense(UUID id, UUID userId) {
         Expense expense = findExpenseAndValidateOwner(id, userId);
 
-        // Reverse budget impact
         updateBudgetSpentAmount(userId, expense.getCategory().getId(),
                 expense.getAmount().negate(), expense.getExpenseDate());
 

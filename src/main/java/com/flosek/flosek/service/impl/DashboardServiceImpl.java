@@ -51,29 +51,23 @@ public class DashboardServiceImpl implements DashboardService {
         LocalDate startOfMonth = today.withDayOfMonth(1);
         LocalDate endOfMonth = today.withDayOfMonth(today.lengthOfMonth());
 
-        // Previous month for comparison
         LocalDate startOfLastMonth = startOfMonth.minusMonths(1);
         LocalDate endOfLastMonth = startOfMonth.minusDays(1);
 
-        // Calculate monthly income
         BigDecimal monthlyIncome = salaryRepository.sumByUserIdAndDateRange(userId, startOfMonth, endOfMonth);
         if (monthlyIncome == null) monthlyIncome = BigDecimal.ZERO;
 
-        // Calculate monthly expenses
         BigDecimal monthlyExpenses = expenseRepository.sumByUserIdAndDateRange(userId, startOfMonth, endOfMonth);
         if (monthlyExpenses == null) monthlyExpenses = BigDecimal.ZERO;
 
-        // Calculate remaining
         BigDecimal remaining = monthlyIncome.subtract(monthlyExpenses);
 
-        // Calculate total balance (sum of all income - sum of all expenses)
         BigDecimal totalIncome = salaryRepository.sumByUserIdAndDateRange(userId, LocalDate.of(2000, 1, 1), today);
         BigDecimal totalExpenses = expenseRepository.sumByUserIdAndDateRange(userId, LocalDate.of(2000, 1, 1), today);
         if (totalIncome == null) totalIncome = BigDecimal.ZERO;
         if (totalExpenses == null) totalExpenses = BigDecimal.ZERO;
         BigDecimal totalBalance = totalIncome.subtract(totalExpenses);
 
-        // Calculate balance change percentage from last month
         BigDecimal lastMonthIncome = salaryRepository.sumByUserIdAndDateRange(userId, startOfLastMonth, endOfLastMonth);
         BigDecimal lastMonthExpenses = expenseRepository.sumByUserIdAndDateRange(userId, startOfLastMonth, endOfLastMonth);
         if (lastMonthIncome == null) lastMonthIncome = BigDecimal.ZERO;
@@ -87,11 +81,9 @@ public class DashboardServiceImpl implements DashboardService {
                     .multiply(BigDecimal.valueOf(100));
         }
 
-        // Count expense categories
         Integer expenseCategories = expenseRepository.countDistinctCategoriesByUserIdAndDateRange(userId, startOfMonth, endOfMonth);
         if (expenseCategories == null) expenseCategories = 0;
 
-        // Budget summary
         BigDecimal budgetTotal = budgetRepository.sumActiveBudgetAmount(userId, today);
         BigDecimal budgetSpent = budgetRepository.sumActiveSpentAmount(userId, today);
         if (budgetTotal == null) budgetTotal = BigDecimal.ZERO;
@@ -103,14 +95,11 @@ public class DashboardServiceImpl implements DashboardService {
                     .multiply(BigDecimal.valueOf(100)).doubleValue();
         }
 
-        // Savings goals
         List<SavingsGoal> savingsGoals = savingsGoalRepository.findTopByUserId(userId, PageRequest.of(0, SAVINGS_GOALS_LIMIT));
         List<SavingsGoalResponseDTO> savingsGoalDTOs = savingsGoalMapper.toResponseDTOList(savingsGoals);
 
-        // Recent transactions
         List<TransactionDTO> recentTransactions = getRecentTransactions(userId, startOfMonth, endOfMonth);
 
-        // Spending categories
         List<SpendingCategoryDTO> spendingCategories = getSpendingCategories(userId, startOfMonth, endOfMonth, monthlyExpenses);
 
         return DashboardResponseDTO.builder()
