@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
+import com.flosek.flosek.enums.Role;
 
 import java.util.UUID;
 
@@ -65,5 +67,15 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
+    }
+
+    @Override
+    public List<UserResponseDTO>getUsersRoleUser(Role role){
+
+        
+        List<User> user = userRepository.findUsersRoleUser(role);
+
+        return userMapper.toResponseDTOList(user);
+
     }
 }

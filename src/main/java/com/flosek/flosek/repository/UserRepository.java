@@ -2,11 +2,16 @@ package com.flosek.flosek.repository;
 
 import com.flosek.flosek.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.repository.query.Param;
+import com.flosek.flosek.enums.Role;
+
+import java.util.List;
 /**
  * Repository for User entity operations
  */
@@ -27,4 +32,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
      * Find user by email and not deleted
      */
     Optional<User> findByEmailAndDeletedAtIsNull(String email);
+
+    @Query("SELECT u FROM User u WHERE u.role = :role")
+    List<User> findUsersRoleUser(@Param("role") Role role);
 }
