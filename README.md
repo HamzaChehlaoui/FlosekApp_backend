@@ -236,6 +236,26 @@ To reduce cold starts further in production:
 - Use a database plan that does not sleep aggressively.
 - Optionally ping `/actuator/health` every 5 minutes from an external uptime monitor.
 
+### No-Upgrade Keep-Alive Option
+
+If you do not want to upgrade plans, this repository includes a GitHub Actions workflow at `.github/workflows/render-keep-alive.yml`.
+
+It sends a request every 5 minutes to your health endpoint to reduce idle cold starts.
+
+Setup steps:
+
+1. Open your GitHub repository settings.
+2. Go to Secrets and variables > Actions.
+3. Add a new repository secret named `RENDER_HEALTHCHECK_URL`.
+4. Set it to your public health URL, for example:
+	`https://your-service-name.onrender.com/actuator/health`
+5. Ensure the workflow is enabled in the Actions tab.
+
+Notes:
+
+- If your health endpoint requires authentication, create a public lightweight ping endpoint.
+- This reduces cold starts significantly, but cannot fully eliminate delays if your database provider force-sleeps very aggressively.
+
 ## Security Notes
 
 - Never commit your `.env` file.
