@@ -211,6 +211,31 @@ The artifact is generated under `target/`.
 
 - Actuator Health: `http://localhost:8081/actuator/health`
 
+## Render Deployment Notes
+
+If you deploy on Render and notice the first request after inactivity takes 30-60 seconds, this is usually a combination of:
+
+- Render web service cold start after idle
+- PostgreSQL instance cold wake-up (depending on your DB provider/plan)
+
+This project includes fail-fast datasource defaults for cloud environments. You can tune them with environment variables:
+
+```env
+DB_POOL_CONNECTION_TIMEOUT_MS=10000
+DB_POOL_VALIDATION_TIMEOUT_MS=5000
+DB_POOL_IDLE_TIMEOUT_MS=300000
+DB_POOL_MAX_LIFETIME_MS=900000
+DB_POOL_KEEPALIVE_MS=120000
+DB_CONNECT_TIMEOUT_SEC=5
+DB_SOCKET_TIMEOUT_SEC=30
+```
+
+To reduce cold starts further in production:
+
+- Use an always-on Render plan for the web service.
+- Use a database plan that does not sleep aggressively.
+- Optionally ping `/actuator/health` every 5 minutes from an external uptime monitor.
+
 ## Security Notes
 
 - Never commit your `.env` file.
