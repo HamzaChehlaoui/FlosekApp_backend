@@ -256,6 +256,15 @@ Notes:
 - If your health endpoint requires authentication, create a public lightweight ping endpoint.
 - This reduces cold starts significantly, but cannot fully eliminate delays if your database provider force-sleeps very aggressively.
 
+To reduce database wake-up latency further, the app also runs an internal DB keep-alive query (`SELECT 1`) on a fixed interval.
+You can control it with:
+
+```env
+APP_DB_KEEPALIVE_ENABLED=true
+APP_DB_KEEPALIVE_INTERVAL_MS=240000
+APP_DB_KEEPALIVE_INITIAL_DELAY_MS=120000
+```
+
 ## Security Notes
 
 - Never commit your `.env` file.
